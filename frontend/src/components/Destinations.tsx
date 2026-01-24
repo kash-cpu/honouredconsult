@@ -357,7 +357,7 @@ export function Destinations({ onLearnMore }: DestinationsProps) {
             Explore Study Destinations
           </h2>
           <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
-            Discover world-class education opportunities in 50+ countries worldwide
+            Discover world-class education opportunities in 21+ countries worldwide
           </p>
         </motion.div>
         

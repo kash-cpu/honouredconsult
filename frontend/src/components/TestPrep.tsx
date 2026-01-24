@@ -171,7 +171,7 @@ export function TestPrep({ onBookTest }: TestPrepProps) {
                           "Score improvement guarantee"
                         ].map((item, idx) => (
                           <div key={idx} className="flex items-start gap-2">
-                            <CheckCircle size={20} weight="fill" className="text-accent mt-0.5 flex-shrink-0" />
+                            <CheckCircle size={20} weight="fill" className="text-accent mt-0.5 shrink-0" />
                             <span className="text-sm text-muted-foreground">{item}</span>
                           </div>
                         ))}

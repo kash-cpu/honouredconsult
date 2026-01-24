@@ -11,7 +11,7 @@ const features = [
   {
     icon: Users,
     title: "15,000+ Students",
-    description: "Successfully placed students in top universities across 50+ countries worldwide"
+    description: "Successfully placed students in top universities across 21+ countries worldwide"
   },
   {
     icon: ShieldCheck,
@@ -20,7 +20,7 @@ const features = [
   },
   {
     icon: ChartLineUp,
-    title: "25+ Years Expertise",
+    title: "5+ Years Expertise",
     description: "Decades of experience helping Nigerian students achieve their international education dreams"
   },
   {

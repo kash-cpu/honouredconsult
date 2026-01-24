@@ -91,9 +91,9 @@ export function Hero({ onBookConsultation }: HeroProps) {
           transition={{ duration: 0.6, delay: 0.4 }}
         >
           {[
-            { value: "50+", label: "Partner Countries" },
+            { value: "21+", label: "Partner Countries" },
             { value: "98%", label: "Visa Success Rate" },
-            { value: "25+", label: "Years Experience" }
+            { value: "5+", label: "Years Experience" }
           ].map((stat, index) => (
             <div key={index} className="text-center p-4 rounded-xl bg-card backdrop-blur-sm border border-border/50">
               <div className="text-3xl md:text-4xl font-bold text-foreground mb-1">{stat.value}</div>
