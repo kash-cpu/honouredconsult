@@ -65,7 +65,7 @@ export function Navbar({ onBookConsultation }: NavbarProps) {
             <div className="flex items-center gap-3">
               <Link to="/" className="text-xl sm:text-2xl md:text-3xl font-bold">
                 <span className="text-primary">
-                  Honoured
+                  Honoured Educational
                 </span>
                 <span className="text-accent"> Consult</span>
               </Link>
