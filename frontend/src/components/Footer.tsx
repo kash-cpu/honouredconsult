@@ -123,7 +123,7 @@ export function Footer({ onBookConsultation }: FooterProps) {
         <Separator className="my-8 bg-primary-foreground/20" />
         
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-primary-foreground/70">
-          <p>© 2024 Honoured Consult. All rights reserved.</p>
+          <p>© 2026 Honoured Consult. All rights reserved.</p>
           <div className="flex gap-6">
             <Link to="/privacy" className="hover:text-primary-foreground transition-colors">Privacy Policy</Link>
             <Link to="/terms" className="hover:text-primary-foreground transition-colors">Terms of Service</Link>
