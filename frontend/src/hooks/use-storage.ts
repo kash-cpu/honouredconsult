@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import Storage from '@/lib/storage';
 
 /**
- * Custom hook to replace Spark's useKV hook
+ * Custom hook for localStorage-backed state
  * Provides React state management with localStorage persistence
  */
 export function useStorage<T>(key: string, initialValue?: T) {

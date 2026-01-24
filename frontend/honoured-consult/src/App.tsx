@@ -1,34 +1,40 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
+    <div className="app">
+      <header className="hero">
+        <div className="brand">Honoured Consult Ltd</div>
+        <h1 className="title">Study Abroad & Career Guidance</h1>
+        <p className="subtitle">
+          Personalized counseling, university admissions support, and visa guidance
+          for ambitious students.
         </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+        <div className="actions">
+          <button className="primary">Book a Consultation</button>
+          <button className="secondary">View Services</button>
+        </div>
+      </header>
+
+      <section className="highlights">
+        <div className="highlight">
+          <h3>Trusted Advisors</h3>
+          <p>Expert counselors with proven admission and visa success stories.</p>
+        </div>
+        <div className="highlight">
+          <h3>Global Destinations</h3>
+          <p>University pathways across Europe, North America, and Asia.</p>
+        </div>
+        <div className="highlight">
+          <h3>End-to-End Support</h3>
+          <p>From profile review to pre-departure, we handle every step.</p>
+        </div>
+      </section>
+
+      <footer className="footer">
+        <p>Honoured Consult Ltd • Professional Education Consulting</p>
+      </footer>
+    </div>
   )
 }
 

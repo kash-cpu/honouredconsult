@@ -1,5 +1,5 @@
 /**
- * LocalStorage utility to replace Spark's KV storage
+ * LocalStorage utility
  * Provides type-safe key-value storage with localStorage
  */
 
