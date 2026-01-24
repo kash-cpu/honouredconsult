@@ -54,7 +54,7 @@ export function CTABanner({ onBookConsultation }: CTABannerProps) {
               className="bg-white/10 backdrop-blur-sm text-white border-white/40 hover:bg-white hover:text-primary px-10 py-7 text-lg font-semibold"
               asChild
             >
-              <a href="tel:+2348001234567">Call: +234 (800) 123-4567</a>
+              <a href="tel:+2348001234567">Call: +2347068385111</a>
             </Button>
           </div>
           

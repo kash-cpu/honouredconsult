@@ -220,7 +220,7 @@ export function ConsultationForm({ open, onOpenChange, initialContext }: Consult
                           }}
                           required
                           className="h-11"
-                          placeholder="+234 800 123 4567"
+                          placeholder="+2347068385111"
                         />
                       </div>
 

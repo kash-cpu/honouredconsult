@@ -71,8 +71,6 @@ export function ApplicationProcess() {
         </motion.div>
         
         <div className="relative">
-          <div className="hidden lg:block absolute top-0 left-0 right-0 h-1 bg-primary" style={{ top: '80px' }} />
-          
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
             {steps.map((step, index) => {
               const Icon = step.icon
@@ -88,7 +86,7 @@ export function ApplicationProcess() {
                   <Card className="h-full border-border/50 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-card group">
                     <CardContent className="pt-6 pb-6 px-6">
                       <div className="flex items-start gap-4 mb-4">
-                        <div className="flex-shrink-0 w-16 h-16 rounded-2xl bg-primary flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <div className="shrink-0 w-16 h-16 rounded-2xl bg-primary flex items-center justify-center group-hover:scale-110 transition-transform">
                           <Icon size={28} weight="duotone" className="text-primary-foreground" />
                         </div>
                         <div className="text-4xl font-bold text-primary/20">{step.number}</div>
@@ -110,10 +108,9 @@ export function ApplicationProcess() {
                       </div>
                     </CardContent>
                   </Card>
-                  
-                  {index < steps.length - 1 && (
-                    <div className="hidden lg:block absolute -right-5 top-20 w-10 h-1 bg-primary" />
-                  )}
+
+
+
                 </motion.div>
               )
             })}

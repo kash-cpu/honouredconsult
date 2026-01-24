@@ -52,7 +52,7 @@ export function Navbar({ onBookConsultation }: NavbarProps) {
     <>
       <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white shadow-md border-b border-border/50`}>
         <motion.div 
-          className="absolute bottom-0 left-0 h-1 bg-gradient-to-r from-primary via-accent to-primary rounded-full"
+          className="absolute bottom-0 left-0 h-1 bg-linear-to-r from-primary via-accent to-primary rounded-full"
           style={{ width: `${scrollProgress}%` }}
           initial={{ width: 0 }}
           animate={{ width: `${scrollProgress}%` }}
@@ -102,7 +102,7 @@ export function Navbar({ onBookConsultation }: NavbarProps) {
                   className="flex items-center gap-2 font-medium transition-colors text-foreground/80 hover:text-accent"
                 >
                   <Phone size={20} weight="duotone" />
-                  <span className="hidden xl:inline">+234 800 123 4567</span>
+                  <span className="hidden xl:inline">+2347068385111</span>
                 </a>
                 <Button 
                   onClick={onBookConsultation}
@@ -186,7 +186,7 @@ export function Navbar({ onBookConsultation }: NavbarProps) {
                     </button>
                   </div>
                   
-                  <div className="mt-6 p-5 bg-gradient-to-br from-secondary/50 to-accent/10 rounded-xl border border-border/50">
+                  <div className="mt-6 p-5 bg-linear-to-br from-secondary/50 to-accent/10 rounded-xl border border-border/50">
                     <p className="text-xs sm:text-sm text-muted-foreground mb-3 font-medium">Contact us directly:</p>
                     <a 
                       href="tel:+2348001234567"
@@ -195,8 +195,7 @@ export function Navbar({ onBookConsultation }: NavbarProps) {
                       <div className="bg-accent/10 p-2 rounded-lg">
                         <Phone size={24} weight="duotone" />
                       </div>
-                      +234 800 123 4567
-                    </a>
+                      +2347068385111                    </a>
                   </div>
                 </div>
                 
