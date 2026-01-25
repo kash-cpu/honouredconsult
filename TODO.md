@@ -1,0 +1,2 @@
+- [x] Modify Hero.tsx layout to two-column grid
+- [x] Add image to right column with mobile responsiveness
