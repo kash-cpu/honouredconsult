@@ -1,15 +1,6 @@
-import { Navbar } from "@/components/Navbar"
-import { Footer } from "@/components/Footer"
-
 export function TermsOfService() {
-  const handleBookConsultation = () => {
-    // Handle consultation booking
-  }
-
   return (
     <div className="min-h-screen">
-      <Navbar onBookConsultation={handleBookConsultation} />
-
       <main className="max-w-4xl mx-auto px-6 py-12">
         <h1 className="text-4xl font-bold mb-8 text-center">Terms of Service</h1>
 
@@ -215,8 +206,6 @@ export function TermsOfService() {
           </section>
         </div>
       </main>
-
-      <Footer onBookConsultation={handleBookConsultation} />
     </div>
   )
 }

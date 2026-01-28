@@ -1,15 +1,6 @@
-import { Navbar } from "@/components/Navbar"
-import { Footer } from "@/components/Footer"
-
 export function PrivacyPolicy() {
-  const handleBookConsultation = () => {
-    // Handle consultation booking
-  }
-
   return (
     <div className="min-h-screen">
-      <Navbar onBookConsultation={handleBookConsultation} />
-
       <main className="max-w-4xl mx-auto px-6 py-12">
         <h1 className="text-4xl font-bold mb-8 text-center">Privacy Policy</h1>
 
@@ -154,8 +145,6 @@ export function PrivacyPolicy() {
           </section>
         </div>
       </main>
-
-      <Footer onBookConsultation={handleBookConsultation} />
     </div>
   )
 }
