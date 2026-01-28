@@ -3,6 +3,12 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 import { useState, useEffect } from "react"
 import {
   User,
@@ -16,12 +22,21 @@ import {
   CheckCircle,
   Clock,
   Bell,
-  SignIn
+  SignIn,
+  PaperPlaneTilt,
+  WhatsappLogo,
+  Plus,
+  Newspaper,
+  UserList,
+  ChartLineUp,
+  Trash,
+  Eye,
+  PencilSimple
 } from "@phosphor-icons/react"
 import { motion } from "framer-motion"
 import { NotificationSettings } from "@/components/NotificationSettings"
 import { NotificationHistory } from "@/components/NotificationHistory"
-import { consultationsAPI, searchesAPI } from "@/lib/api"
+import api from "@/lib/api"
 
 interface AdminDashboardProps {
   open: boolean
@@ -31,14 +46,26 @@ interface AdminDashboardProps {
 export function AdminDashboard({ open, onClose }: AdminDashboardProps) {
   const [consultations, setConsultations] = useState<any[]>([])
   const [searches, setSearches] = useState<any[]>([])
+  const [newsletters, setNewsletters] = useState<any[]>([])
+  const [subscribers, setSubscribers] = useState<any[]>([])
   const [isOwner, setIsOwner] = useState(false)
   const [refreshTrigger, setRefreshTrigger] = useState(0)
   const [loading, setLoading] = useState(false)
+  
+  // Newsletter form state
+  const [showNewsletterDialog, setShowNewsletterDialog] = useState(false)
+  const [newsletterForm, setNewsletterForm] = useState({
+    title: '',
+    excerpt: '',
+    content: '',
+    published: false
+  })
+  const [editingNewsletter, setEditingNewsletter] = useState<any>(null)
+  const [alertMessage, setAlertMessage] = useState<{type: 'success' | 'error', message: string} | null>(null)
 
   useEffect(() => {
     const checkOwner = async () => {
       try {
-        // Check if user is logged in as admin
         const token = localStorage.getItem('auth_token');
         const user = localStorage.getItem('user');
 
@@ -53,7 +80,7 @@ export function AdminDashboard({ open, onClose }: AdminDashboardProps) {
       }
     }
     checkOwner()
-  }, [open]) // Re-check when dashboard opens
+  }, [open])
 
   useEffect(() => {
     if (open && isOwner) {
@@ -65,20 +92,127 @@ export function AdminDashboard({ open, onClose }: AdminDashboardProps) {
   const loadData = async () => {
     setLoading(true)
     try {
-      const [consultationsRes, searchesRes] = await Promise.all([
-        consultationsAPI.getAll(),
-        searchesAPI.getAll()
+      const [consultationsRes, searchesRes, newslettersRes, subscribersRes] = await Promise.all([
+        api.get('/consultations'),
+        api.get('/searches'),
+        api.get('/newsletters/admin/all'),
+        api.get('/subscribers')
       ])
 
-      setConsultations(consultationsRes.data || [])
-      setSearches(searchesRes.data || [])
+      setConsultations(consultationsRes.data.data || [])
+      setSearches(searchesRes.data.data || [])
+      setNewsletters(newslettersRes.data.data || [])
+      setSubscribers(subscribersRes.data.data || [])
     } catch (error) {
       console.error('Failed to load admin data:', error)
       setConsultations([])
       setSearches([])
+      setNewsletters([])
+      setSubscribers([])
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleContactClient = async (consultation: any, method: 'email' | 'phone' | 'whatsapp') => {
+    try {
+      await api.patch(`/consultations/${consultation._id || consultation.id}`, {
+        status: 'contacted',
+        contactMethod: method
+      })
+
+      // Open email client or phone dialer
+      if (method === 'email') {
+        window.location.href = `mailto:${consultation.email}?subject=Re: Your Consultation Request&body=Dear ${consultation.firstName},`
+      } else if (method === 'phone') {
+        window.location.href = `tel:${consultation.phone}`
+      } else if (method === 'whatsapp') {
+        const phone = consultation.phone.replace(/\D/g, '')
+        window.open(`https://wa.me/${phone}`, '_blank')
+      }
+
+      await loadData()
+      showAlert('success', `Contact marked as contacted via ${method}`)
+    } catch (error) {
+      console.error('Failed to mark as contacted:', error)
+      showAlert('error', 'Failed to update contact status')
+    }
+  }
+
+  const showAlert = (type: 'success' | 'error', message: string) => {
+    setAlertMessage({ type, message })
+    setTimeout(() => setAlertMessage(null), 5000)
+  }
+
+  const handleCreateNewsletter = async () => {
+    try {
+      if (!newsletterForm.title || !newsletterForm.content || !newsletterForm.excerpt) {
+        showAlert('error', 'Please fill in all fields')
+        return
+      }
+
+      if (editingNewsletter) {
+        await api.patch(`/newsletters/${editingNewsletter._id}`, newsletterForm)
+        showAlert('success', 'Newsletter updated successfully')
+      } else {
+        await api.post('/newsletters', newsletterForm)
+        showAlert('success', 'Newsletter created successfully')
+      }
+
+      setShowNewsletterDialog(false)
+      setNewsletterForm({ title: '', excerpt: '', content: '', published: false })
+      setEditingNewsletter(null)
+      await loadData()
+    } catch (error) {
+      console.error('Failed to save newsletter:', error)
+      showAlert('error', 'Failed to save newsletter')
+    }
+  }
+
+  const handleSendNewsletter = async (newsletter: any) => {
+    if (!confirm(`Send this newsletter to ${subscribers.filter((s: any) => s.isActive).length} subscribers?`)) {
+      return
+    }
+
+    try {
+      await api.post(`/newsletters/${newsletter._id}/send`)
+      showAlert('success', 'Newsletter sent successfully')
+      await loadData()
+    } catch (error) {
+      console.error('Failed to send newsletter:', error)
+      showAlert('error', 'Failed to send newsletter')
+    }
+  }
+
+  const handleDeleteNewsletter = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this newsletter?')) {
+      return
+    }
+
+    try {
+      await api.delete(`/newsletters/${id}`)
+      showAlert('success', 'Newsletter deleted successfully')
+      await loadData()
+    } catch (error) {
+      console.error('Failed to delete newsletter:', error)
+      showAlert('error', 'Failed to delete newsletter')
+    }
+  }
+
+  const openNewsletterDialog = (newsletter?: any) => {
+    if (newsletter) {
+      setEditingNewsletter(newsletter)
+      setNewsletterForm({
+        title: newsletter.title,
+        excerpt: newsletter.excerpt,
+        content: newsletter.content,
+        published: newsletter.published
+      })
+    } else {
+      setEditingNewsletter(null)
+      setNewsletterForm({ title: '', excerpt: '', content: '', published: false })
+    }
+    setShowNewsletterDialog(true)
   }
 
   if (!open) return null
@@ -112,7 +246,6 @@ export function AdminDashboard({ open, onClose }: AdminDashboardProps) {
                 size="lg"
                 onClick={() => {
                   onClose()
-                  // Open login dialog from parent component
                   const event = new CustomEvent('open-login-dialog')
                   window.dispatchEvent(event)
                 }}
@@ -132,9 +265,9 @@ export function AdminDashboard({ open, onClose }: AdminDashboardProps) {
     new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime()
   )
 
-  const sortedSearches = [...(searches || [])].sort((a, b) =>
-    new Date(b.searchedAt).getTime() - new Date(a.searchedAt).getTime()
-  )
+  const pendingConsultations = consultations.filter((c: any) => c.status === 'pending')
+  const contactedConsultations = consultations.filter((c: any) => c.status === 'contacted' || c.status === 'completed')
+  const activeSubscribers = subscribers.filter((s: any) => s.isActive).length
 
   return (
     <motion.div
@@ -146,70 +279,125 @@ export function AdminDashboard({ open, onClose }: AdminDashboardProps) {
       <div className="max-w-7xl mx-auto px-6 py-8">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-4xl font-bold text-foreground mb-2">Admin Dashboard</h1>
-            <p className="text-muted-foreground">Manage consultations and track user searches</p>
+            <h1 className="text-4xl font-bold text-foreground mb-2">Professional Admin Dashboard</h1>
+            <p className="text-muted-foreground">Manage clients, newsletters, and track engagement</p>
           </div>
           <Button variant="ghost" size="icon" onClick={onClose} className="h-12 w-12">
             <X size={24} weight="bold" />
           </Button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card>
+        {alertMessage && (
+          <Alert className={`mb-4 ${alertMessage.type === 'success' ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
+            <AlertDescription>{alertMessage.message}</AlertDescription>
+          </Alert>
+        )}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <Card className="bg-blue-50 dark:bg-blue-950 border-blue-200">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Total Consultations</CardTitle>
+              <CardTitle className="text-sm font-medium text-blue-900 dark:text-blue-100 flex items-center gap-2">
+                <User size={16} weight="duotone" />
+                Total Clients
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-primary">{consultations?.length || 0}</div>
+              <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">{consultations.length}</div>
             </CardContent>
           </Card>
-          <Card>
+          
+          <Card className="bg-blue-50 dark:bg-blue-950 border-blue-200">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Pending Reviews</CardTitle>
+              <CardTitle className="text-sm font-medium text-blue-900 dark:text-blue-100 flex items-center gap-2">
+                <Clock size={16} weight="duotone" />
+                Pending Contact
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-accent">
-                {consultations?.filter((c: any) => c.status === "pending").length || 0}
-              </div>
+              <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">{pendingConsultations.length}</div>
             </CardContent>
           </Card>
-          <Card>
+          
+          <Card className="bg-blue-50 dark:bg-blue-950 border-blue-200">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Total Searches</CardTitle>
+              <CardTitle className="text-sm font-medium text-blue-900 dark:text-blue-100 flex items-center gap-2">
+                <CheckCircle size={16} weight="duotone" />
+                Contacted
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-secondary-foreground">{searches?.length || 0}</div>
+              <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">{contactedConsultations.length}</div>
+            </CardContent>
+          </Card>
+          
+          <Card className="bg-blue-50 dark:bg-blue-950 border-blue-200">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium text-blue-900 dark:text-blue-100 flex items-center gap-2">
+                <UserList size={16} weight="duotone" />
+                Subscribers
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">{activeSubscribers}</div>
             </CardContent>
           </Card>
         </div>
 
-        <Tabs defaultValue="consultations" className="w-full">
-          <TabsList className="grid w-full max-w-2xl grid-cols-4">
-            <TabsTrigger value="consultations">Consultations</TabsTrigger>
-            <TabsTrigger value="searches">Searches</TabsTrigger>
-            <TabsTrigger value="notifications">
-              <Bell size={16} className="mr-2" />
-              Notifications
+        <Tabs defaultValue="clients" className="w-full">
+          <TabsList className="grid w-full max-w-4xl grid-cols-6 mb-6">
+            <TabsTrigger value="clients" className="flex items-center gap-2">
+              <User size={16} />
+              <span className="hidden sm:inline">Clients</span>
+            </TabsTrigger>
+            <TabsTrigger value="newsletters" className="flex items-center gap-2">
+              <Newspaper size={16} />
+              <span className="hidden sm:inline">News</span>
+            </TabsTrigger>
+            <TabsTrigger value="subscribers" className="flex items-center gap-2">
+              <UserList size={16} />
+              <span className="hidden sm:inline">Subscribers</span>
+            </TabsTrigger>
+            <TabsTrigger value="searches" className="flex items-center gap-2">
+              <MagnifyingGlass size={16} />
+              <span className="hidden sm:inline">Searches</span>
+            </TabsTrigger>
+            <TabsTrigger value="notifications" className="flex items-center gap-2">
+              <Bell size={16} />
+              <span className="hidden sm:inline">Alerts</span>
             </TabsTrigger>
             <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
           
-          <TabsContent value="consultations" className="mt-6">
+          <TabsContent value="clients" className="mt-6">
+            <Card className="mb-4">
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between">
+                  <span>Client Management</span>
+                  <div className="flex gap-2">
+                    <Badge variant="outline">{pendingConsultations.length} Pending</Badge>
+                    <Badge variant="outline">{contactedConsultations.length} Contacted</Badge>
+                  </div>
+                </CardTitle>
+                <CardDescription>Track and manage your client consultations</CardDescription>
+              </CardHeader>
+            </Card>
+            
             <ScrollArea className="h-[600px]">
               <div className="space-y-4">
                 {sortedConsultations.length === 0 ? (
                   <Card>
                     <CardContent className="py-12 text-center">
-                      <p className="text-muted-foreground">No consultations yet</p>
+                      <User size={48} weight="duotone" className="mx-auto mb-4 text-muted-foreground" />
+                      <p className="text-muted-foreground">No client consultations yet</p>
                     </CardContent>
                   </Card>
                 ) : (
                   sortedConsultations.map((consultation: any) => (
-                    <Card key={consultation.id} className="overflow-hidden">
-                      <div className="h-1 bg-primary" />
+                    <Card key={consultation._id || consultation.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                      <div className={`h-1 ${consultation.status === 'contacted' || consultation.status === 'completed' ? 'bg-green-500' : 'bg-orange-500'}`} />
                       <CardHeader>
                         <div className="flex items-start justify-between">
-                          <div>
+                          <div className="flex-1">
                             <CardTitle className="text-xl mb-1">
                               {consultation.firstName} {consultation.lastName}
                             </CardTitle>
@@ -224,23 +412,32 @@ export function AdminDashboard({ open, onClose }: AdminDashboardProps) {
                               })}
                             </CardDescription>
                           </div>
-                          <Badge className={
-                            consultation.status === "pending" 
-                              ? "bg-accent text-accent-foreground" 
-                              : "bg-primary text-primary-foreground"
-                          }>
-                            {consultation.status === "pending" ? (
-                              <>
-                                <Clock size={14} className="mr-1" />
-                                Pending
-                              </>
-                            ) : (
-                              <>
-                                <CheckCircle size={14} className="mr-1" />
-                                Reviewed
-                              </>
+                          <div className="flex flex-col items-end gap-2">
+                            <Badge className={
+                              consultation.status === "contacted" || consultation.status === "completed"
+                                ? "bg-green-600 text-white" 
+                                : consultation.status === "pending"
+                                ? "bg-orange-500 text-white"
+                                : "bg-blue-500 text-white"
+                            }>
+                              {consultation.status === "contacted" || consultation.status === "completed" ? (
+                                <>
+                                  <CheckCircle size={14} className="mr-1" />
+                                  Contacted
+                                </>
+                              ) : (
+                                <>
+                                  <Clock size={14} className="mr-1" />
+                                  Pending
+                                </>
+                              )}
+                            </Badge>
+                            {consultation.contactMethod && (
+                              <Badge variant="outline" className="text-xs">
+                                via {consultation.contactMethod}
+                              </Badge>
                             )}
-                          </Badge>
+                          </div>
                         </div>
                       </CardHeader>
                       <CardContent className="space-y-4">
@@ -305,6 +502,41 @@ export function AdminDashboard({ open, onClose }: AdminDashboardProps) {
                             </p>
                           </div>
                         )}
+                        
+                        <div className="flex flex-wrap gap-2 pt-4 border-t">
+                          <Button 
+                            size="sm" 
+                            onClick={() => handleContactClient(consultation, 'email')}
+                            className="flex items-center gap-2"
+                          >
+                            <Envelope size={16} />
+                            Email Client
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => handleContactClient(consultation, 'phone')}
+                            className="flex items-center gap-2"
+                          >
+                            <Phone size={16} />
+                            Call Client
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => handleContactClient(consultation, 'whatsapp')}
+                            className="flex items-center gap-2 bg-green-50 hover:bg-green-100"
+                          >
+                            <WhatsappLogo size={16} />
+                            WhatsApp
+                          </Button>
+                        </div>
+                        
+                        {consultation.contactedAt && (
+                          <div className="text-xs text-muted-foreground bg-green-50 p-2 rounded">
+                            ✓ Contacted on {new Date(consultation.contactedAt).toLocaleDateString()}
+                          </div>
+                        )}
                       </CardContent>
                     </Card>
                   ))
@@ -313,40 +545,172 @@ export function AdminDashboard({ open, onClose }: AdminDashboardProps) {
             </ScrollArea>
           </TabsContent>
           
-          <TabsContent value="searches" className="mt-6">
+          <TabsContent value="newsletters" className="mt-6">
+            <Card className="mb-4">
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between">
+                  <span>Newsletter Management</span>
+                  <Button onClick={() => openNewsletterDialog()} className="flex items-center gap-2">
+                    <Plus size={16} />
+                    Create Newsletter
+                  </Button>
+                </CardTitle>
+                <CardDescription>Create and manage newsletters for your website</CardDescription>
+              </CardHeader>
+            </Card>
+            
             <ScrollArea className="h-[600px]">
-              <div className="space-y-4">
-                {sortedSearches.length === 0 ? (
+              <div className="grid grid-cols-1 gap-4">
+                {newsletters.length === 0 ? (
                   <Card>
                     <CardContent className="py-12 text-center">
+                      <Newspaper size={48} weight="duotone" className="mx-auto mb-4 text-muted-foreground" />
+                      <p className="text-muted-foreground mb-4">No newsletters yet</p>
+                      <Button onClick={() => openNewsletterDialog()}>
+                        <Plus size={16} className="mr-2" />
+                        Create Your First Newsletter
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  newsletters.map((newsletter: any) => (
+                    <Card key={newsletter._id} className="hover:shadow-lg transition-shadow">
+                      <CardHeader>
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <CardTitle className="text-lg mb-2">{newsletter.title}</CardTitle>
+                            <CardDescription>{newsletter.excerpt}</CardDescription>
+                          </div>
+                          <div className="flex flex-col gap-2">
+                            <Badge className={newsletter.published ? "bg-green-600" : "bg-gray-400"}>
+                              {newsletter.published ? "Published" : "Draft"}
+                            </Badge>
+                            {newsletter.sentToSubscribers && (
+                              <Badge variant="outline" className="text-xs">
+                                Sent to {newsletter.recipientCount}
+                              </Badge>
+                            )}
+                          </div>
+                        </div>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="flex flex-wrap gap-2">
+                          <Button size="sm" variant="outline" onClick={() => openNewsletterDialog(newsletter)}>
+                            <PencilSimple size={16} className="mr-2" />
+                            Edit
+                          </Button>
+                          {newsletter.published && !newsletter.sentToSubscribers && (
+                            <Button size="sm" onClick={() => handleSendNewsletter(newsletter)}>
+                              <PaperPlaneTilt size={16} className="mr-2" />
+                              Send to Subscribers
+                            </Button>
+                          )}
+                          <Button size="sm" variant="destructive" onClick={() => handleDeleteNewsletter(newsletter._id)}>
+                            <Trash size={16} className="mr-2" />
+                            Delete
+                          </Button>
+                        </div>
+                        <div className="mt-4 text-xs text-muted-foreground">
+                          Created: {new Date(newsletter.createdAt).toLocaleDateString()}
+                          {newsletter.publishedAt && ` | Published: ${new Date(newsletter.publishedAt).toLocaleDateString()}`}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))
+                )}
+              </div>
+            </ScrollArea>
+          </TabsContent>
+
+          <TabsContent value="subscribers" className="mt-6">
+            <Card className="mb-4">
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between">
+                  <span>Newsletter Subscribers</span>
+                  <Badge variant="outline">{activeSubscribers} Active</Badge>
+                </CardTitle>
+                <CardDescription>Manage your newsletter subscribers</CardDescription>
+              </CardHeader>
+            </Card>
+            
+            <ScrollArea className="h-[600px]">
+              <div className="space-y-2">
+                {subscribers.length === 0 ? (
+                  <Card>
+                    <CardContent className="py-12 text-center">
+                      <UserList size={48} weight="duotone" className="mx-auto mb-4 text-muted-foreground" />
+                      <p className="text-muted-foreground">No subscribers yet</p>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  subscribers.map((subscriber: any) => (
+                    <Card key={subscriber._id} className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-10 h-10 rounded-full flex items-center justify-center ${subscriber.isActive ? 'bg-green-100' : 'bg-gray-100'}`}>
+                            <Envelope size={18} className={subscriber.isActive ? 'text-green-600' : 'text-gray-400'} />
+                          </div>
+                          <div>
+                            <p className="font-medium">{subscriber.email}</p>
+                            <p className="text-xs text-muted-foreground">
+                              {subscriber.isActive ? 'Active' : 'Unsubscribed'} • 
+                              Joined {new Date(subscriber.subscribedAt).toLocaleDateString()}
+                            </p>
+                          </div>
+                        </div>
+                        <Badge variant={subscriber.isActive ? "default" : "outline"}>
+                          {subscriber.isActive ? "Active" : "Inactive"}
+                        </Badge>
+                      </div>
+                    </Card>
+                  ))
+                )}
+              </div>
+            </ScrollArea>
+          </TabsContent>
+          
+          <TabsContent value="searches" className="mt-6">
+            <Card className="mb-4">
+              <CardHeader>
+                <CardTitle>User Searches</CardTitle>
+                <CardDescription>Track what users are searching for</CardDescription>
+              </CardHeader>
+            </Card>
+            
+            <ScrollArea className="h-[600px]">
+              <div className="space-y-4">
+                {searches.length === 0 ? (
+                  <Card>
+                    <CardContent className="py-12 text-center">
+                      <MagnifyingGlass size={48} weight="duotone" className="mx-auto mb-4 text-muted-foreground" />
                       <p className="text-muted-foreground">No searches yet</p>
                     </CardContent>
                   </Card>
                 ) : (
-                  sortedSearches.map((search: any) => (
-                    <Card key={search.id}>
+                  searches.sort((a: any, b: any) => 
+                    new Date(b.searchedAt).getTime() - new Date(a.searchedAt).getTime()
+                  ).map((search: any) => (
+                    <Card key={search._id || search.id}>
                       <CardContent className="py-4">
-                        <div className="flex items-start justify-between">
-                          <div className="flex items-start gap-3 flex-1">
-                            <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0 mt-1">
-                              <MagnifyingGlass size={18} weight="duotone" className="text-accent" />
+                        <div className="flex items-start gap-3">
+                          <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0 mt-1">
+                            <MagnifyingGlass size={18} weight="duotone" className="text-accent" />
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex flex-wrap gap-2 mb-2">
+                              {search.level && <Badge variant="secondary">Level: {search.level}</Badge>}
+                              {search.destination && <Badge variant="secondary">Destination: {search.destination}</Badge>}
+                              {search.field && <Badge variant="secondary">Field: {search.field}</Badge>}
                             </div>
-                            <div className="flex-1">
-                              <div className="flex flex-wrap gap-2 mb-2">
-                                {search.level && <Badge variant="secondary">Level: {search.level}</Badge>}
-                                {search.destination && <Badge variant="secondary">Destination: {search.destination}</Badge>}
-                                {search.field && <Badge variant="secondary">Field: {search.field}</Badge>}
-                              </div>
-                              <p className="text-xs text-muted-foreground">
-                                {new Date(search.searchedAt).toLocaleDateString("en-US", {
-                                  year: "numeric",
-                                  month: "short",
-                                  day: "numeric",
-                                  hour: "2-digit",
-                                  minute: "2-digit"
-                                })}
-                              </p>
-                            </div>
+                            <p className="text-xs text-muted-foreground">
+                              {new Date(search.searchedAt).toLocaleDateString("en-US", {
+                                year: "numeric",
+                                month: "short",
+                                day: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit"
+                              })}
+                            </p>
                           </div>
                         </div>
                       </CardContent>
@@ -366,6 +730,72 @@ export function AdminDashboard({ open, onClose }: AdminDashboardProps) {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Newsletter Dialog */}
+      <Dialog open={showNewsletterDialog} onOpenChange={setShowNewsletterDialog}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{editingNewsletter ? 'Edit Newsletter' : 'Create New Newsletter'}</DialogTitle>
+            <DialogDescription>
+              Create engaging newsletters for your website and subscribers
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div>
+              <Label htmlFor="title">Title</Label>
+              <Input
+                id="title"
+                placeholder="Enter newsletter title..."
+                value={newsletterForm.title}
+                onChange={(e) => setNewsletterForm({...newsletterForm, title: e.target.value})}
+              />
+            </div>
+            <div>
+              <Label htmlFor="excerpt">Excerpt (Short Summary)</Label>
+              <Textarea
+                id="excerpt"
+                placeholder="Brief summary of the newsletter..."
+                value={newsletterForm.excerpt}
+                onChange={(e) => setNewsletterForm({...newsletterForm, excerpt: e.target.value})}
+                rows={2}
+              />
+            </div>
+            <div>
+              <Label htmlFor="content">Content (HTML supported)</Label>
+              <Textarea
+                id="content"
+                placeholder="Write your newsletter content here. You can use HTML tags for formatting..."
+                value={newsletterForm.content}
+                onChange={(e) => setNewsletterForm({...newsletterForm, content: e.target.value})}
+                rows={10}
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                You can use HTML tags like &lt;h2&gt;, &lt;p&gt;, &lt;strong&gt;, &lt;ul&gt;, &lt;li&gt; for formatting
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="published"
+                checked={newsletterForm.published}
+                onChange={(e) => setNewsletterForm({...newsletterForm, published: e.target.checked})}
+                className="w-4 h-4"
+              />
+              <Label htmlFor="published" className="cursor-pointer">
+                Publish immediately (visible on website)
+              </Label>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowNewsletterDialog(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleCreateNewsletter}>
+              {editingNewsletter ? 'Update' : 'Create'} Newsletter
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </motion.div>
   )
 }

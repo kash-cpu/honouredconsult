@@ -84,6 +84,12 @@ export function Navbar({ onBookConsultation }: NavbarProps) {
               >
                 Services
               </button>
+              <Link
+                to="/newsletters"
+                className="font-medium transition-colors text-foreground/80 hover:text-accent"
+              >
+                Newsletter
+              </Link>
               <button
                 onClick={() => scrollToSection("success-stories")}
                 className="font-medium transition-colors text-foreground/80 hover:text-accent"
@@ -167,6 +173,13 @@ export function Navbar({ onBookConsultation }: NavbarProps) {
                     >
                       Services
                     </button>
+                    <Link
+                      to="/newsletters"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="text-left py-4 px-5 rounded-xl text-foreground font-medium transition-all hover:bg-secondary/80 active:scale-[0.98] touch-manipulation min-h-[56px] text-base sm:text-lg border border-transparent hover:border-border/50"
+                    >
+                      Newsletter
+                    </Link>
                     <button
                       onClick={() => scrollToSection("test-prep")}
                       className="text-left py-4 px-5 rounded-xl text-foreground font-medium transition-all hover:bg-secondary/80 active:scale-[0.98] touch-manipulation min-h-[56px] text-base sm:text-lg border border-transparent hover:border-border/50"

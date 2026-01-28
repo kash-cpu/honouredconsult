@@ -9,6 +9,11 @@ const transporter = nodemailer.createTransport({
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASSWORD,
   },
+  tls: {
+    rejectUnauthorized: false // Allow self-signed certificates in development
+  },
+  debug: process.env.NODE_ENV === 'development', // Enable debug output in development
+  logger: true // Log to console
 });
 
 // Send consultation confirmation email to user
@@ -221,11 +226,104 @@ export async function sendAdminNotification(email: string, firstName: string, la
 // Test email connection
 export async function testEmailConnection() {
   try {
-    const info = await transporter.verify();
-    console.log('Email server is ready to take our messages');
+    await transporter.verify();
+    console.log('✓ Email server is ready to take our messages');
+    return true;
+  } catch (error: any) {
+    console.error('✗ Email server connection failed:', error.message);
+    console.error('Please check your SMTP settings in .env file');
+    console.error('For Gmail, you need an App Password (not your regular password)');
+    return false;
+  }
+}
+
+// Send newsletter to subscribers
+export async function sendNewsletterEmail(email: string, subject: string, content: string) {
+  try {
+    const mailOptions = {
+      from: `"Honoured Educational Consult" <${process.env.SMTP_USER}>`,
+      to: email,
+      subject: subject,
+      html: `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>${subject}</title>
+          <style>
+            body {
+              font-family: 'Arial', sans-serif;
+              line-height: 1.6;
+              color: #333;
+              max-width: 600px;
+              margin: 0 auto;
+              padding: 20px;
+              background-color: #f8f9fa;
+            }
+            .container {
+              background-color: #ffffff;
+              border-radius: 8px;
+              box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+              padding: 30px;
+            }
+            .header {
+              text-align: center;
+              margin-bottom: 30px;
+              padding-bottom: 20px;
+              border-bottom: 2px solid #3498db;
+            }
+            .header h1 {
+              color: #2c3e50;
+              margin: 0;
+            }
+            .content {
+              margin-bottom: 30px;
+              line-height: 1.8;
+            }
+            .content p {
+              margin: 0 0 15px 0;
+            }
+            .footer {
+              text-align: center;
+              margin-top: 30px;
+              padding-top: 20px;
+              border-top: 1px solid #eee;
+              color: #666;
+              font-size: 14px;
+            }
+            .unsubscribe {
+              color: #999;
+              font-size: 12px;
+              margin-top: 10px;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>Honoured Educational Consult</h1>
+            </div>
+            
+            <div class="content">
+              ${content}
+            </div>
+            
+            <div class="footer">
+              <p>&copy; ${new Date().getFullYear()} Honoured Educational Consult. All rights reserved.</p>
+              <p>📞 Phone: +2347068385111 | 📧 Email: info@honouredconsult.com</p>
+            </div>
+          </div>
+        </body>
+        </html>
+      `,
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+    console.log('Newsletter email sent:', info.messageId);
     return true;
   } catch (error) {
-    console.error('Email server connection failed:', error);
+    console.error('Failed to send newsletter email:', error);
     return false;
   }
 }

@@ -113,15 +113,22 @@ router.get('/:id', authenticateToken, isAdmin, async (req: AuthRequest, res: Res
 // Update consultation (admin only)
 router.patch('/:id', authenticateToken, isAdmin, async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const { status, notes } = req.body;
+    const { status, notes, contactMethod } = req.body;
     
     const updateData: any = {};
     if (status) updateData.status = status;
     if (notes !== undefined) updateData.notes = notes;
+    if (contactMethod) updateData.contactMethod = contactMethod;
     
     if (status === 'reviewed') {
       updateData.reviewedAt = new Date();
       updateData.reviewedBy = req.user?.userId;
+    }
+    
+    if (status === 'contacted' || contactMethod) {
+      updateData.contactedAt = new Date();
+      updateData.contactedBy = req.user?.userId;
+      if (!updateData.status) updateData.status = 'contacted';
     }
 
     const consultation = await Consultation.findByIdAndUpdate(

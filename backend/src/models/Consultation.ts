@@ -13,6 +13,9 @@ export interface IConsultation extends Document {
   submittedAt: Date;
   reviewedAt?: Date;
   reviewedBy?: mongoose.Types.ObjectId;
+  contactedAt?: Date;
+  contactedBy?: mongoose.Types.ObjectId;
+  contactMethod?: 'email' | 'phone' | 'whatsapp';
   notes?: string;
 }
 
@@ -33,6 +36,12 @@ const ConsultationSchema: Schema = new Schema({
   submittedAt: { type: Date, default: Date.now },
   reviewedAt: Date,
   reviewedBy: { type: Schema.Types.ObjectId, ref: 'User' },
+  contactedAt: Date,
+  contactedBy: { type: Schema.Types.ObjectId, ref: 'User' },
+  contactMethod: { 
+    type: String, 
+    enum: ['email', 'phone', 'whatsapp'] 
+  },
   notes: String
 }, { timestamps: true });
 

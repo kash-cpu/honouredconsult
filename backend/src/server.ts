@@ -13,6 +13,9 @@ import universityRoutes from './routes/universities';
 import applicationRoutes from './routes/applications';
 import adminRoutes from './routes/admin';
 import blogRoutes from './routes/blogs';
+import newsletterRoutes from './routes/newsletters';
+import subscriberRoutes from './routes/subscribers';
+import { testEmailConnection } from './services/emailService';
 
 // Load environment variables
 dotenv.config();
@@ -53,6 +56,8 @@ app.use('/api/universities', universityRoutes);
 app.use('/api/applications', applicationRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/blogs', blogRoutes);
+app.use('/api/newsletters', newsletterRoutes);
+app.use('/api/subscribers', subscriberRoutes);
 
 // 404 handler
 app.use((req: Request, res: Response) => {
@@ -77,6 +82,10 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 const startServer = async () => {
   try {
     await connectDB();
+    
+    // Test email connection
+    console.log('\nTesting email configuration...');
+    await testEmailConnection();
     
     app.listen(PORT, () => {
       console.log(`
