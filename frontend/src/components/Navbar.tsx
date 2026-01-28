@@ -63,11 +63,12 @@ export function Navbar({ onBookConsultation }: NavbarProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 sm:h-20">
             <div className="flex items-center gap-3">
-              <Link to="/" className="text-xl sm:text-2xl md:text-3xl font-bold">
-                <span className="text-primary">
-                  Honoured Educational
-                </span>
-                <span className="text-accent"> Consult</span>
+              <Link to="/" className="flex items-center">
+                <img 
+                  src="/logo.png" 
+                  alt="Honoured Educational Consult" 
+                  className="h-12 sm:h-14 md:h-16 object-contain"
+                />
               </Link>
             </div>
 

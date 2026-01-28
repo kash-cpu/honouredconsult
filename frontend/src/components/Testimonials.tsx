@@ -1,7 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Star, Quotes } from "@phosphor-icons/react"
-import { motion } from "framer-motion"
 
 interface Testimonial {
   id: string
@@ -73,35 +72,25 @@ const testimonials: Testimonial[] = [
 export function Testimonials() {
   return (
     <section className="py-16 md:py-24 bg-gray-200 relative overflow-hidden">
-      <div className="absolute inset-0 opacity-30" style={{
-        backgroundImage: `repeating-conic-gradient(from 0deg, transparent 0deg 60deg, oklch(0.45 0.12 250 / 0.03) 60deg 120deg)`
+      <div className="absolute inset-0 opacity-30 bg-cover bg-center bg-no-repeat" style={{
+        backgroundImage: `url('/yays.png')`,
+        backgroundAttachment: 'scroll',
+        backgroundSize: 'cover'
       }} />
 
       <div className="relative max-w-7xl mx-auto px-6 md:px-8">
-        <motion.div
-          className="text-center mb-12"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-        >
+        <div className="text-center mb-12">
           <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4 tracking-tight">
             Success Stories from Our Students
           </h2>
           <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
             Join thousands of successful students who achieved their study abroad dreams with our guidance
           </p>
-        </motion.div>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           {testimonials.map((testimonial, index) => (
-            <motion.div
-              key={testimonial.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-            >
+            <div key={testimonial.id}>
               <Card className="h-full border-border/50 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-card group">
                 <CardContent className="pt-8 pb-8 px-6 space-y-4 relative">
                   <div className="absolute top-6 right-6 opacity-10">
@@ -137,7 +126,7 @@ export function Testimonials() {
                   </div>
                 </CardContent>
               </Card>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>
