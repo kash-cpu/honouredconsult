@@ -66,10 +66,13 @@ export function Hero({ onBookConsultation }: HeroProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
           >
-            <Button
+             <Button
               size="lg"
               className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold px-8 py-7 text-lg shadow-xl hover:shadow-2xl transition-all hover:scale-105 group"
-              onClick={onBookConsultation}
+              onClick={(e) => {
+                console.log('Button clicked!', e);
+                onBookConsultation();
+              }}
             >
               Book Free Consultation
               <ArrowRight size={20} weight="bold" className="ml-2 group-hover:translate-x-1 transition-transform" />

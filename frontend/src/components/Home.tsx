@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react"
 import { Toaster } from "@/components/ui/sonner"
 import { toast } from "sonner"
-import { Navbar } from "@/components/Navbar"
 import { Hero } from "@/components/Hero"
 import { WhyChooseUs } from "@/components/WhyChooseUs"
 import { Destinations } from "@/components/Destinations"
@@ -9,14 +8,14 @@ import { ApplicationProcess } from "@/components/ApplicationProcess"
 import { Services } from "@/components/Services"
 import { Testimonials } from "@/components/Testimonials"
 import { CTABanner } from "@/components/CTABanner"
-import { Footer } from "@/components/Footer"
-import { ConsultationForm } from "@/components/ConsultationForm"
 import { AdminDashboard } from "@/components/AdminDashboard"
 import { LoginDialog } from "@/components/LoginDialog"
 
-export function Home() {
-  const [consultationOpen, setConsultationOpen] = useState(false)
-  const [consultationContext, setConsultationContext] = useState("")
+interface HomeProps {
+  onBookConsultation: (context?: string) => void
+}
+
+export function Home({ onBookConsultation }: HomeProps) {
   const [adminOpen, setAdminOpen] = useState(false)
   const [isOwner, setIsOwner] = useState(false)
   const [loginOpen, setLoginOpen] = useState(false)
@@ -59,22 +58,17 @@ export function Home() {
     }
   }, [])
 
-  const handleBookConsultation = (context?: string) => {
-    setConsultationContext(context || "")
-    setConsultationOpen(true)
-  }
-
   const handleLearnMore = (destination: string) => {
     toast.info(`Explore ${destination}`, {
       description: "Book a consultation to learn more about studying in this destination."
     })
-    handleBookConsultation()
+    onBookConsultation()
   }
 
   return (
     <div className="min-h-screen">
       <main>
-        <Hero onBookConsultation={() => handleBookConsultation()} />
+        <Hero onBookConsultation={onBookConsultation} />
 
         <WhyChooseUs />
 
@@ -88,18 +82,12 @@ export function Home() {
           <Services />
         </div>
 
-        <CTABanner onBookConsultation={() => handleBookConsultation()} />
+        <CTABanner onBookConsultation={onBookConsultation} />
 
         <div id="success-stories">
           <Testimonials />
         </div>
       </main>
-
-      <ConsultationForm
-        open={consultationOpen}
-        onOpenChange={setConsultationOpen}
-        initialContext={consultationContext}
-      />
 
       <AdminDashboard
         open={adminOpen}
