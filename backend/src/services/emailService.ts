@@ -1,29 +1,37 @@
-import nodemailer from 'nodemailer';
+import nodemailer from "nodemailer";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 // Create a transporter using SMTP
 const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: parseInt(process.env.SMTP_PORT || '587'),
-  secure: false, 
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASSWORD,
-  },
-  tls: {
-    rejectUnauthorized: false 
-  },
-  debug: process.env.NODE_ENV === 'development', 
-  logger: true 
+   service: "gmail",
+   host: `${process.env.SMTP_HOST}`,
+   port: parseInt(process.env.SMTP_PORT || "587"),
+   secure: false,
+   auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASSWORD,
+   },
+   tls: {
+      rejectUnauthorized: false,
+   },
+   debug: process.env.NODE_ENV === "development",
+   logger: true,
 });
 
 // Send consultation confirmation email to user
-export async function sendConsultationConfirmation(email: string, firstName: string, lastName: string) {
-  try {
-    const mailOptions = {
-      from: `"Honoured Educational Consult" <${process.env.SMTP_USER}>`,
-      to: email,
-      subject: 'Your Consultation Request has been Received!',
-      html: `
+export async function sendConsultationConfirmation(
+   email: string,
+   firstName: string,
+   lastName: string,
+) {
+   try {
+      const mailOptions = {
+         from: `"Honoured Educational Consult" <${process.env.SMTP_USER}>`,
+         to: email,
+         subject: "Your Consultation Request has been Received!",
+         html: `
         <!DOCTYPE html>
         <html lang="en">
         <head>
@@ -116,25 +124,29 @@ export async function sendConsultationConfirmation(email: string, firstName: str
         </body>
         </html>
       `,
-    };
+      };
 
-    const info = await transporter.sendMail(mailOptions);
-    console.log('Consultation confirmation email sent:', info.messageId);
-    return true;
-  } catch (error) {
-    console.error('Failed to send consultation confirmation email:', error);
-    return false;
-  }
+      const info = await transporter.sendMail(mailOptions);
+      console.log("Consultation confirmation email sent:", info.messageId);
+      return true;
+   } catch (error) {
+      console.error("Failed to send consultation confirmation email:", error);
+      return false;
+   }
 }
 
 // Send notification email to admin
-export async function sendAdminNotification(email: string, firstName: string, lastName: string) {
-  try {
-    const mailOptions = {
-      from: `"Honoured Educational Consult" <${process.env.SMTP_USER}>`,
-      to: process.env.ADMIN_EMAIL,
-      subject: 'New Consultation Request Received',
-      html: `
+export async function sendAdminNotification(
+   email: string,
+   firstName: string,
+   lastName: string,
+) {
+   try {
+      const mailOptions = {
+         from: `"Honoured Educational Consult" <${process.env.SMTP_USER}>`,
+         to: process.env.ADMIN_EMAIL,
+         subject: "New Consultation Request Received",
+         html: `
         <!DOCTYPE html>
         <html lang="en">
         <head>
@@ -212,39 +224,45 @@ export async function sendAdminNotification(email: string, firstName: string, la
         </body>
         </html>
       `,
-    };
+      };
 
-    const info = await transporter.sendMail(mailOptions);
-    console.log('Admin notification email sent:', info.messageId);
-    return true;
-  } catch (error) {
-    console.error('Failed to send admin notification email:', error);
-    return false;
-  }
+      const info = await transporter.sendMail(mailOptions);
+      console.log("Admin notification email sent:", info.messageId);
+      return true;
+   } catch (error) {
+      console.error("Failed to send admin notification email:", error);
+      return false;
+   }
 }
 
 // Test email connection
 export async function testEmailConnection() {
-  try {
-    await transporter.verify();
-    console.log('✓ Email server is ready to take our messages');
-    return true;
-  } catch (error: any) {
-    console.error('✗ Email server connection failed:', error.message);
-    console.error('Please check your SMTP settings in .env file');
-    console.error('For Gmail, you need an App Password (not your regular password)');
-    return false;
-  }
+   try {
+      await transporter.verify();
+      console.log("✓ Email server is ready to take our messages");
+      return true;
+   } catch (error: any) {
+      console.error("✗ Email server connection failed:", error.message);
+      console.error("Please check your SMTP settings in .env file");
+      console.error(
+         "For Gmail, you need an App Password (not your regular password)",
+      );
+      return false;
+   }
 }
 
 // Send newsletter to subscribers
-export async function sendNewsletterEmail(email: string, subject: string, content: string) {
-  try {
-    const mailOptions = {
-      from: `"Honoured Educational Consult" <${process.env.SMTP_USER}>`,
-      to: email,
-      subject: subject,
-      html: `
+export async function sendNewsletterEmail(
+   email: string,
+   subject: string,
+   content: string,
+) {
+   try {
+      const mailOptions = {
+         from: `"Honoured Educational Consult" <${process.env.SMTP_USER}>`,
+         to: email,
+         subject: subject,
+         html: `
         <!DOCTYPE html>
         <html lang="en">
         <head>
@@ -317,13 +335,13 @@ export async function sendNewsletterEmail(email: string, subject: string, conten
         </body>
         </html>
       `,
-    };
+      };
 
-    const info = await transporter.sendMail(mailOptions);
-    console.log('Newsletter email sent:', info.messageId);
-    return true;
-  } catch (error) {
-    console.error('Failed to send newsletter email:', error);
-    return false;
-  }
+      const info = await transporter.sendMail(mailOptions);
+      console.log("Newsletter email sent:", info.messageId);
+      return true;
+   } catch (error) {
+      console.error("Failed to send newsletter email:", error);
+      return false;
+   }
 }
