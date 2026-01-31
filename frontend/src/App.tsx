@@ -7,6 +7,7 @@ import { TermsOfService } from "@/components/TermsOfService";
 import { CookiePolicy } from "@/components/CookiePolicy";
 import Newsletters from "@/pages/Newsletters";
 import { ConsultationForm } from "@/components/ConsultationForm";
+import { CountryAbout } from "@/components/CountryAbout";
 import { useState } from "react";
 import { AdminDashboard } from "./components/AdminDashboard";
 
@@ -29,6 +30,10 @@ function App() {
                   element={<Home onBookConsultation={handleBookConsultation} />}
                />
                <Route path="/newsletters" element={<Newsletters />} />
+               <Route 
+                  path="/country/:countryId" 
+                  element={<CountryAbout onBookConsultation={handleBookConsultation} />} 
+               />
                <Route path="/privacy" element={<PrivacyPolicy />} />
                <Route path="/terms" element={<TermsOfService />} />
                <Route path="/cookies" element={<CookiePolicy />} />

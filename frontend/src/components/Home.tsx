@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
 import { Hero } from "@/components/Hero";
@@ -15,6 +16,7 @@ interface HomeProps {
 }
 
 export function Home({ onBookConsultation }: HomeProps) {
+   const navigate = useNavigate();
    const [adminOpen, setAdminOpen] = useState(false);
    const [isOwner, setIsOwner] = useState(false);
    const [loginOpen, setLoginOpen] = useState(false);
@@ -58,11 +60,9 @@ export function Home({ onBookConsultation }: HomeProps) {
    }, []);
 
    const handleLearnMore = (destination: string) => {
-      toast.info(`Explore ${destination}`, {
-         description:
-            "Book a consultation to learn more about studying in this destination.",
-      });
-      onBookConsultation();
+      // Convert destination name to URL-friendly ID
+      const countryId = destination.toLowerCase().replace(/\s+/g, '');
+      navigate(`/country/${countryId}`);
    };
 
    return (
