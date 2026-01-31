@@ -712,7 +712,7 @@ export function CountryAbout({ onBookConsultation }: CountryAboutProps) {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-white">
       {/* Hero Section with Image */}
       <div className="relative h-[400px] md:h-[500px] overflow-hidden">
         <div 
@@ -749,7 +749,7 @@ export function CountryAbout({ onBookConsultation }: CountryAboutProps) {
           transition={{ duration: 0.6 }}
           className="mb-12"
         >
-          <Card className="border-none shadow-xl bg-gradient-to-br from-primary/5 to-accent/5">
+          <Card className="border-border/50 shadow-lg bg-white">
             <CardContent className="p-8 md:p-12">
               <h2 className="text-3xl md:text-4xl font-bold mb-6 text-foreground">
                 {country.description}
@@ -767,7 +767,7 @@ export function CountryAbout({ onBookConsultation }: CountryAboutProps) {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="mb-12"
+          className="mb-12 bg-gray-200 -mx-6 md:-mx-8 px-6 md:px-8 py-12 md:py-16"
         >
           <h3 className="text-2xl md:text-3xl font-bold mb-6 text-center">Quick Facts</h3>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
@@ -779,7 +779,7 @@ export function CountryAbout({ onBookConsultation }: CountryAboutProps) {
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: index * 0.05 }}
               >
-                <Card className="text-center h-full hover:shadow-lg transition-all hover:-translate-y-1">
+                <Card className="text-center h-full hover:shadow-lg transition-all hover:-translate-y-1 bg-white border-border/50">
                   <CardContent className="p-4">
                     <div className="text-2xl md:text-3xl font-bold text-primary mb-2">
                       {fact.value}
@@ -812,7 +812,7 @@ export function CountryAbout({ onBookConsultation }: CountryAboutProps) {
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
               >
-                <Card className="h-full hover:shadow-xl transition-all hover:-translate-y-1">
+                <Card className="h-full hover:shadow-xl transition-all hover:-translate-y-1 bg-white border-border/50">
                   <CardContent className="p-6">
                     <div className="flex items-start gap-4">
                       <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
@@ -836,9 +836,9 @@ export function CountryAbout({ onBookConsultation }: CountryAboutProps) {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="mb-12"
+          className="mb-12 bg-gray-200 -mx-6 md:-mx-8 px-6 md:px-8 py-12 md:py-16"
         >
-          <Card>
+          <Card className="bg-white border-border/50">
             <CardContent className="p-8 md:p-10">
               <h3 className="text-2xl md:text-3xl font-bold mb-6 flex items-center gap-3">
                 <GraduationCap size={32} weight="duotone" className="text-primary" />
@@ -874,7 +874,7 @@ export function CountryAbout({ onBookConsultation }: CountryAboutProps) {
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.4 }}
           >
-            <Card className="h-full">
+            <Card className="h-full bg-white border-border/50">
               <CardContent className="p-6 md:p-8">
                 <h3 className="text-xl md:text-2xl font-bold mb-4 flex items-center gap-2">
                   <MapPin size={28} weight="duotone" className="text-primary" />
@@ -898,7 +898,7 @@ export function CountryAbout({ onBookConsultation }: CountryAboutProps) {
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.45 }}
           >
-            <Card className="h-full">
+            <Card className="h-full bg-white border-border/50">
               <CardContent className="p-6 md:p-8">
                 <h3 className="text-xl md:text-2xl font-bold mb-4 flex items-center gap-2">
                   <GraduationCap size={28} weight="duotone" className="text-primary" />
@@ -925,7 +925,7 @@ export function CountryAbout({ onBookConsultation }: CountryAboutProps) {
           transition={{ duration: 0.6, delay: 0.5 }}
           className="mb-12"
         >
-          <Card className="bg-gradient-to-br from-accent/10 to-primary/5">
+          <Card className="bg-white border-border/50">
             <CardContent className="p-8 md:p-10">
               <h3 className="text-2xl md:text-3xl font-bold mb-4 flex items-center gap-3">
                 <Briefcase size={32} weight="duotone" className="text-primary" />
@@ -944,20 +944,19 @@ export function CountryAbout({ onBookConsultation }: CountryAboutProps) {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.6 }}
-          className="text-center"
+          className="text-center bg-gray-200 -mx-6 md:-mx-8 px-6 md:px-8 py-12 md:py-16"
         >
-          <Card className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground border-none">
+          <Card className="bg-white border-border/50">
             <CardContent className="p-8 md:p-12">
               <h3 className="text-2xl md:text-3xl font-bold mb-4">
                 Ready to Start Your Journey to {country.name}?
               </h3>
-              <p className="text-lg mb-8 opacity-90 max-w-2xl mx-auto">
+              <p className="text-lg mb-8 text-muted-foreground max-w-2xl mx-auto">
                 Book a free consultation with our expert advisors to learn more about studying in {country.name} and get personalized guidance for your application.
               </p>
               <Button 
                 size="lg" 
-                variant="secondary"
-                className="text-lg px-8 py-6 hover:scale-105 transition-transform"
+                className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold text-lg px-8 py-6 hover:scale-105 transition-transform shadow-xl"
                 onClick={handleApply}
               >
                 <AirplaneTilt size={24} weight="duotone" className="mr-2" />
