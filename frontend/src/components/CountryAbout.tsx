@@ -728,7 +728,7 @@ export function CountryAbout({ onBookConsultation }: CountryAboutProps) {
             transition={{ duration: 0.8 }}
             className="max-w-4xl"
           >
-            <div className="text-8xl md:text-9xl mb-6 drop-shadow-2xl">{country.flag}</div>
+            <div className="text-8xl md:text-9xl mb-6 drop-shadow-2xl text-primary font-bold">{country.flag}</div>
             <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 drop-shadow-lg">
               Study in {country.name}
             </h1>
@@ -781,10 +781,10 @@ export function CountryAbout({ onBookConsultation }: CountryAboutProps) {
               >
                 <Card className="text-center h-full hover:shadow-lg transition-all hover:-translate-y-1 bg-white border-border/50">
                   <CardContent className="p-4">
-                    <div className="text-2xl md:text-3xl font-bold text-primary mb-2">
+                    <div className="text-lg sm:text-xl md:text-2xl font-bold text-primary mb-2 break-words">
                       {fact.value}
                     </div>
-                    <div className="text-sm text-muted-foreground">
+                    <div className="text-xs sm:text-sm text-muted-foreground">
                       {fact.label}
                     </div>
                   </CardContent>
