@@ -1,9 +1,15 @@
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useState, useEffect } from "react"
-import { List, X, Phone, User } from "@phosphor-icons/react"
+import { List, X, Phone, User, WhatsappLogo } from "@phosphor-icons/react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Link, useNavigate, useLocation } from "react-router-dom"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 interface NavbarProps {
   onBookConsultation: () => void
@@ -115,13 +121,45 @@ export function Navbar({ onBookConsultation }: NavbarProps) {
               </button>
 
               <div className="flex items-center gap-3 ml-2">
-                <a
-                  href="tel:+2348001234567"
-                  className="flex items-center gap-2 font-medium transition-colors text-foreground/80 hover:text-accent"
-                >
-                  <Phone size={20} weight="duotone" />
-                  <span className="hidden xl:inline">+2347068385111</span>
-                </a>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="flex items-center gap-2 font-medium transition-colors text-foreground/80 hover:text-accent p-2 rounded-lg hover:bg-secondary/50">
+                      <Phone size={24} weight="duotone" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-64">
+                    <DropdownMenuItem asChild>
+                      <a
+                        href="tel:+2347068385111"
+                        className="flex items-center gap-3 cursor-pointer py-3"
+                      >
+                        <div className="bg-accent/10 p-2 rounded-lg">
+                          <Phone size={20} weight="duotone" className="text-accent" />
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="font-semibold">Call us</span>
+                          <span className="text-sm text-muted-foreground">+234 706 838 5111</span>
+                        </div>
+                      </a>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <a
+                        href="https://wa.me/2347068385111"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-3 cursor-pointer py-3"
+                      >
+                        <div className="bg-green-500/10 p-2 rounded-lg">
+                          <WhatsappLogo size={20} weight="duotone" className="text-green-500" />
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="font-semibold">WhatsApp us</span>
+                          <span className="text-sm text-muted-foreground">08095029844</span>
+                        </div>
+                      </a>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
                 <Button
                   onClick={onBookConsultation}
                   className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold shadow-lg hover:shadow-xl transition-all hover:scale-105"
@@ -214,13 +252,25 @@ export function Navbar({ onBookConsultation }: NavbarProps) {
                   <div className="mt-6 p-5 bg-linear-to-br from-secondary/50 to-accent/10 rounded-xl border border-border/50">
                     <p className="text-xs sm:text-sm text-muted-foreground mb-3 font-medium">Contact us directly:</p>
                     <a
-                      href="tel:+2348001234567"
-                      className="flex items-center gap-3 text-base sm:text-lg font-bold text-accent hover:text-accent/80 transition-colors active:scale-[0.98] touch-manipulation min-h-[44px]"
+                      href="tel:+2347068385111"
+                      className="flex items-center gap-3 text-base sm:text-lg font-bold text-accent hover:text-accent/80 transition-colors active:scale-[0.98] touch-manipulation min-h-[44px] mb-3"
                     >
                       <div className="bg-accent/10 p-2 rounded-lg">
                         <Phone size={24} weight="duotone" />
                       </div>
-                      +2347068385111                    </a>
+                      +234 706 838 5111
+                    </a>
+                    <a
+                      href="https://wa.me/2347068385111"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-3 text-base sm:text-lg font-bold text-green-600 hover:text-green-500 transition-colors active:scale-[0.98] touch-manipulation min-h-[44px]"
+                    >
+                      <div className="bg-green-500/10 p-2 rounded-lg">
+                        <WhatsappLogo size={24} weight="duotone" />
+                      </div>
+                      WhatsApp us
+                    </a>
                   </div>
                 </div>
 

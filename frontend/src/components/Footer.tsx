@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { Link } from "react-router-dom"
-import { Phone, EnvelopeSimple, FacebookLogo, InstagramLogo, TiktokLogo, TwitterLogo } from "@phosphor-icons/react"
+import { Phone, EnvelopeSimple, WhatsappLogo, FacebookLogo, InstagramLogo, TiktokLogo, TwitterLogo } from "@phosphor-icons/react"
 
 interface FooterProps {
   onBookConsultation: () => void
@@ -98,6 +98,15 @@ export function Footer({ onBookConsultation }: FooterProps) {
                 <EnvelopeSimple size={22} weight="duotone" />
                 <span>info@honouredconsult.com</span>
               </div>
+              <a 
+                href="https://wa.me/2347068385111" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 hover:text-primary-foreground transition-colors group"
+              >
+                <WhatsappLogo size={22} weight="duotone" className="group-hover:scale-110 transition-transform" />
+                <span>Chat on WhatsApp</span>
+              </a>
             </div>
             
             <div className="mt-6">
