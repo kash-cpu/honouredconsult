@@ -10,6 +10,7 @@ import { Services } from "@/components/Services";
 import { Testimonials } from "@/components/Testimonials";
 import { CTABanner } from "@/components/CTABanner";
 import { LoginDialog } from "@/components/LoginDialog";
+import { Helmet } from "react-helmet-async";
 
 interface HomeProps {
    onBookConsultation: (context?: string) => void;
@@ -78,56 +79,68 @@ export function Home({ onBookConsultation }: HomeProps) {
    };
 
    return (
-      <div className="min-h-screen">
-         <main>
-            <Hero onBookConsultation={onBookConsultation} />
+      <>
+         <Helmet>
+            <title>Honoured Consult - Study Abroad Experts</title>
+            <meta
+               name="description"
+               content="Your trusted partner in international education. We handle everything so you can focus on your dreams."
+               data-rh="true"
+            />
+            <link rel="canonical" href="/" />
+         </Helmet>
 
-            <WhyChooseUs />
+         <div className="min-h-screen">
+            <main>
+               <Hero onBookConsultation={onBookConsultation} />
 
-            <div id="destinations">
-               <Destinations onLearnMore={handleLearnMore} />
-            </div>
+               <WhyChooseUs />
 
-            <ApplicationProcess />
+               <div id="destinations">
+                  <Destinations onLearnMore={handleLearnMore} />
+               </div>
 
-            <div id="services">
-               <Services />
-            </div>
+               <ApplicationProcess />
 
-            <CTABanner onBookConsultation={onBookConsultation} />
+               <div id="services">
+                  <Services />
+               </div>
 
-            <div id="success-stories">
-               <Testimonials />
-            </div>
-         </main>
+               <CTABanner onBookConsultation={onBookConsultation} />
 
-         <LoginDialog
-            open={loginOpen}
-            onOpenChange={setLoginOpen}
-            onLoginSuccess={() => {
-               // Refresh isOwner state after successful login
-               const token = localStorage.getItem("auth_token");
-               const user = localStorage.getItem("user");
-               if (token && user) {
-                  const userData = JSON.parse(user);
-                  setIsOwner(userData.isAdmin || userData.isOwner || false);
-                  // Open admin dashboard immediately after login
-                  setAdminOpen(true);
-               }
-            }}
-         />
+               <div id="success-stories">
+                  <Testimonials />
+               </div>
+            </main>
 
-         {isOwner && (
-            <button
-               onClick={() => setAdminOpen(true)}
-               className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-2xl hover:shadow-3xl transition-all hover:scale-110 flex items-center justify-center z-40 font-bold text-xl"
-               title="Admin Dashboard (Ctrl+Shift+A)"
-            >
-               A
-            </button>
-         )}
+            <LoginDialog
+               open={loginOpen}
+               onOpenChange={setLoginOpen}
+               onLoginSuccess={() => {
+                  // Refresh isOwner state after successful login
+                  const token = localStorage.getItem("auth_token");
+                  const user = localStorage.getItem("user");
+                  if (token && user) {
+                     const userData = JSON.parse(user);
+                     setIsOwner(userData.isAdmin || userData.isOwner || false);
+                     // Open admin dashboard immediately after login
+                     setAdminOpen(true);
+                  }
+               }}
+            />
 
-         <Toaster />
-      </div>
+            {isOwner && (
+               <button
+                  onClick={() => setAdminOpen(true)}
+                  className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-2xl hover:shadow-3xl transition-all hover:scale-110 flex items-center justify-center z-40 font-bold text-xl"
+                  title="Admin Dashboard (Ctrl+Shift+A)"
+               >
+                  A
+               </button>
+            )}
+
+            <Toaster />
+         </div>
+      </>
    );
 }

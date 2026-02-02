@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://www.honouredconsult.com/sitemap.xml
+
+User-agent: Googlebot
+Disallow: /random/admin
